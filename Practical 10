@@ -1,0 +1,51 @@
+// Pin definitions matching your Tinkercad wiring
+const int sensorPin = A0;
+const int redLED = 4;
+const int yellowLED = 5;
+const int greenLED = 6;
+const int pumpPin = 9;
+
+// Moisture threshold values (Tinkercad sensor range: 0 to 876)
+const int dryThreshold = 300;   // Below this = Dry (Pump ON)
+const int wetThreshold = 600;   // Above this = Wet (Pump OFF)
+
+void setup() {
+  pinMode(redLED, OUTPUT);
+  pinMode(yellowLED, OUTPUT);
+  pinMode(greenLED, OUTPUT);
+  pinMode(pumpPin, OUTPUT);
+  
+  Serial.begin(9600); // Start serial monitor for debugging
+}
+
+void loop() {
+  int moistureValue = analogRead(sensorPin);
+  
+  // Print sensor reading to Serial Monitor
+  Serial.print("Soil Moisture Level: ");
+  Serial.println(moistureValue);
+
+  if (moistureValue < dryThreshold) {
+    // Soil is DRY: Turn on Red LED and activate Pump
+    digitalWrite(redLED, HIGH);
+    digitalWrite(yellowLED, LOW);
+    digitalWrite(greenLED, LOW);
+    digitalWrite(pumpPin, HIGH);
+  } 
+  else if (moistureValue >= dryThreshold && moistureValue < wetThreshold) {
+    // Soil is MOIST: Turn on Yellow LED and keep Pump OFF
+    digitalWrite(redLED, LOW);
+    digitalWrite(yellowLED, HIGH);
+    digitalWrite(greenLED, LOW);
+    digitalWrite(pumpPin, LOW);
+  } 
+  else {
+    // Soil is WET: Turn on Green LED and keep Pump OFF
+    digitalWrite(redLED, LOW);
+    digitalWrite(yellowLED, LOW);
+    digitalWrite(greenLED, HIGH);
+    digitalWrite(pumpPin, LOW);
+  }
+
+  delay(500); // Short delay for stability
+}
